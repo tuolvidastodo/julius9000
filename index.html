@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Julius 9000</title>
+  <style>
+    body {
+      font-family: monospace;
+      background-color: #f4f4f4;
+      padding: 2em;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      display: flex;
+      margin-bottom: 1em;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    button {
+      padding: 0.5em 1em;
+      font-size: 1em;
+      background-color: #555;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #response {
+      background: white;
+      padding: 1em;
+      border-radius: 5px;
+      min-height: 80px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Habla con Julius 9000</h1>
+  <form id="chat-form">
+    <input type="text" id="user-input" placeholder="Escribe tu mensaje..." required />
+    <button type="submit">Enviar</button>
+  </form>
+  <div id="response"></div>
+
+  <script>
+    document.getElementById('chat-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('user-input');
+      const message = input.value;
+      const responseDiv = document.getElementById('response');
+      responseDiv.innerText = "Pensando...";
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+
+        const data = await res.json();
+        responseDiv.innerText = data.reply || 'Sin respuesta.';
+      } catch (err) {
+        responseDiv.innerText = 'Error al contactar a Julius.';
+        console.error(err);
+      }
+
+      input.value = '';
+    });
+  </script>
+</body>
+</html>
